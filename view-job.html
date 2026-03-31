@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Details - JobHunt</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar"></nav>
+    <script type="module">
+        import { loadUserNavbar } from "./js/navbar.js";
+        loadUserNavbar();
+    </script>
+
+    <div class="container" style="max-width: 900px; margin-top: 2rem;">
+        <div id="job-details-container" class="card fade-in">
+            <div id="loading" class="section-header" style="text-align:center; padding: 3rem; border:none;">
+                <i class="fas fa-circle-notch fa-spin" style="font-size:2rem; color:var(--primary);"></i>
+                <p style="margin-top:1rem; color:var(--text-light);">Fetching job details...</p>
+            </div>
+
+            <div id="job-content" style="display:none;">
+                <div class="section-header-row section-header">
+                    <div>
+                        <h1 id="j-title" style="font-size: 2.2rem; margin-bottom: 0.5rem;">Job Title</h1>
+                        <p class="btn-link" style="font-size: 1.2rem; font-weight: 500;">
+                            <i class="fas fa-building"></i> <span id="j-company">Company Name</span>
+                        </p>
+                        <div id="j-meta-container" class="meta-row">
+                            <span><i class="fas fa-map-marker-alt"></i> <span id="j-location">Location</span></span>
+                            <span><i class="fas fa-briefcase"></i> <span id="j-type">Type</span></span>
+                            <span><i class="fas fa-money-bill-wave"></i> <span id="j-salary">Salary</span></span>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <a id="apply-btn" href="#" class="btn-primary"
+                            style="padding: 1rem 2rem; font-size: 1.1rem;">Apply Now</a>
+                    </div>
+                </div>
+
+                <div class="job-section" style="margin-bottom: 2.5rem;">
+                    <h3 class="section-header" style="border:none;"><i class="fas fa-info-circle"></i> About the Role
+                    </h3>
+                    <p id="j-description" style="line-height: 1.8; color: var(--text-light); white-space: pre-wrap;">
+                        Description goes here...</p>
+                </div>
+
+                <div class="job-section" style="margin-bottom: 2.5rem;">
+                    <h3 class="section-header" style="border:none;"><i class="fas fa-list-ul"></i> Requirements & Skills
+                    </h3>
+                    <div id="j-requirements" style="line-height: 1.8; color: var(--text-light); white-space: pre-wrap;">
+                        Requirements go here...</div>
+                </div>
+
+                <div class="section-header-row" style="border-top: 1px solid var(--glass-border); padding-top: 1.5rem;">
+                    <span style="color: var(--text-light); font-size: 0.85rem;">Posted on: <span
+                            id="j-date">Date</span></span>
+                    <a href="find-jobs.html" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back to Search</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/view-job.js"></script>
+</body>
+
+</html>

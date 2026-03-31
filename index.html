@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobHunt | Elevate Your Career</title>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Simple Navbar -->
+    <!-- Navbar -->
+    <nav class="navbar"></nav>
+    <script type="module">
+        import { loadUserNavbar } from "./js/navbar.js";
+        loadUserNavbar();
+    </script>
+
+    <!-- Main Hero Section -->
+    <main class="hero">
+        <div class="fade-in">
+            <h1>Connect. <span class="gradient-text">Empower.</span> Succeed.</h1>
+            <p>The ultimate job portal connecting talented individuals with world-class companies. Choose your path
+                below to get started.</p>
+        </div>
+
+        <!-- Role Selection -->
+        <div class="role-grid fade-in"> 
+            <!-- Job Seeker Path -->
+            <a href="find-jobs.html" class="glass-card">
+                <i class="fas fa-user-tie icon-primary"></i>
+                <h3>Job Seeker</h3>
+                <p>Browse thousands of job opportunities, manage your profile, and apply with ease.</p>
+            </a>
+
+            <!-- Company Path -->
+            <a href="company-signup.html" class="glass-card">
+                <i class="fas fa-building icon-secondary"></i>
+                <h3>Company</h3>
+                <p>Find the best talent, post job listings, and manage candidates in one place.</p>
+            </a>
+
+            <!-- Admin Path -->
+            <a href="admin-auth.html" class="glass-card">
+                <i class="fas fa-user-shield icon-accent"></i>
+                <h3>Administrator</h3>
+                <p>Oversee platform operations, manage users, and ensure a safe job-seeking environment.</p>
+            </a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 JobHunt Portal by Shehnaz Zazwala. All rights reserved.</p>
+    </footer>
+
+</body>
+
+</html>

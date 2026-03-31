@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Super Admin - JobHunt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .admin-table th {
+            background: #111827;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
+        }
+
+        .admin-table tr:hover {
+            background-color: hsla(138, 69%, 79%, 0.692);
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #260057;
+            background: #89d3da;
+            border: 1px solid #6bb2f58f;
+        }
+
+        .badge-Pending {
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fcd34d;
+        }
+
+        .badge-Active {
+            background: #ecfdf5;
+            color: #047857;
+            border: 1px solid #6ee7b7;
+        }
+
+        .badge-Rejected {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+
+        .btn-approve {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .btn-approve:hover {
+            background: #059669;
+        }
+
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: 500;
+            transition: background 0.2s;
+            margin-left: 5px;
+        }
+
+        .btn-reject:hover {
+            background: #dc2626;
+        }
+
+        #logout-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        #logout-btn:hover {
+            background: #b91c1c;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar"></nav>
+
+    <div class="container main-content">
+        <!-- Stats Section (Initial Mobile View) -->
+        <div id="admin-stats">
+            <div class="grid-2-mobile" style="margin-bottom: 2rem;">
+                <div class="card" style="text-align:center;">
+                    <h3 style="color:#6b7280; font-size:1rem;">Total Companies</h3>
+                    <h1 style="font-size:3rem; margin:10px 0; color:var(--secondary);" id="total-companies">0</h1>
+                </div>
+                <div class="card" style="text-align:center;">
+                    <h3 style="color:#6b7280; font-size:1rem;">Total Users</h3>
+                    <h1 style="font-size:3rem; margin:10px 0; color:var(--primary);" id="total-users">0</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Company Management Section -->
+        <div id="admin-companies">
+            <h2 style="margin-bottom:1rem;">Company Management</h2>
+            <div class="card" style="margin-bottom:2rem; overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Company Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="company-list">
+                        <!-- Companies load here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- User Management Section -->
+        <div id="admin-users">
+            <h2 style="margin-bottom:1rem;">User Management</h2>
+            <div class="card" style="overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Registered</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-list">
+                        <!-- Users load here -->
+                        <tr>
+                            <td colspan="4">Loading users...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { loadAdminNavbar } from "./js/navbar.js";
+        loadAdminNavbar();
+    </script>
+    <script type="module" src="js/admin.js"></script>
+</body>
+
+</html>

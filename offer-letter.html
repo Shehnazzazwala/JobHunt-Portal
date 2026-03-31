@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offer Letter</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar"></nav>
+    <script type="module">
+        import { loadUserNavbar } from "./js/navbar.js";
+        loadUserNavbar();
+    </script>
+
+    <div class="container" style="max-width: 820px;">
+        <!-- Loading state -->
+        <div id="offer-loading" style="text-align:center; padding: 4rem;">
+            <i class="fas fa-circle-notch fa-spin" style="font-size:2rem; color:var(--primary);"></i>
+            <p style="margin-top:1rem; color:var(--text-light);">Loading your offer letter...</p>
+        </div>
+
+        <!-- Offer Letter Card -->
+        <div id="offer-card" class="offer-letter-card" style="display:none;">
+
+            <!-- Top accent bar -->
+            <div class="offer-accent-bar"></div>
+
+            <!-- Header -->
+            <div class="offer-header">
+                <div class="offer-logo-circle"><i class="fas fa-briefcase"></i></div>
+                <div>
+                    <div id="ol-company" class="offer-company-name">Company Name</div>
+                    <div class="offer-label">Official Offer of Employment</div>
+                </div>
+                <div class="offer-date-badge">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="ol-date"></span>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="offer-body">
+                <p class="offer-greeting">Dear <strong id="ol-name">Applicant</strong>,</p>
+
+                <p>We are delighted to extend this <strong>Offer of Employment</strong> to you for the position of
+                    <strong id="ol-job" class="offer-highlight"></strong> at
+                    <strong id="ol-company2" class="offer-highlight"></strong>.
+                </p>
+
+                <p>After a thorough evaluation of your qualifications, experience, and interview performance, we are
+                    confident that you will be a valuable addition to our team. We look forward to the expertise and
+                    unique perspective you will bring.</p>
+
+                <div class="offer-details-grid">
+                    <div class="offer-detail-item">
+                        <i class="fas fa-user-tie"></i>
+                        <div>
+                            <div class="offer-detail-label">Position</div>
+                            <div id="ol-job2" class="offer-detail-value"></div>
+                        </div>
+                    </div>
+                    <div class="offer-detail-item">
+                        <i class="fas fa-building"></i>
+                        <div>
+                            <div class="offer-detail-label">Organisation</div>
+                            <div id="ol-company3" class="offer-detail-value"></div>
+                        </div>
+                    </div>
+                    <div class="offer-detail-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <div>
+                            <div class="offer-detail-label">Offer Date</div>
+                            <div id="ol-date2" class="offer-detail-value"></div>
+                        </div>
+                    </div>
+                    <div class="offer-detail-item">
+                        <i class="fas fa-envelope-open-text"></i>
+                        <div>
+                            <div class="offer-detail-label">Status</div>
+                            <div id="ol-accepted" class="offer-detail-value">Pending Acceptance</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p>Please review this offer carefully. By clicking <strong>Accept Offer</strong> below, you confirm
+                    your intent to join us. Our HR team will reach out with next steps shortly after acceptance.</p>
+
+                <p>We are excited about the possibility of you joining us and hope you will accept this offer.</p>
+
+                <p style="margin-top:1.5rem;">Warm regards,</p>
+                <div class="offer-signature">
+                    <div class="offer-sig-line"></div>
+                    <div id="ol-company4" class="offer-sig-company"></div>
+                    <div class="offer-sig-title">Hiring Team</div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="offer-actions" id="offer-actions">
+                <button id="accept-btn" class="btn-primary offer-accept-btn" onclick="acceptOffer()">
+                    <i class="fas fa-handshake"></i> Accept Offer
+                </button>
+                <button class="btn-sm btn-resume" style="padding:10px 20px;" onclick="window.print()">
+                    <i class="fas fa-print"></i> Print / Save PDF
+                </button>
+            </div>
+
+            <!-- Already accepted state -->
+            <div id="offer-accepted-msg" class="offer-accepted-msg" style="display:none;">
+                <i class="fas fa-check-circle"></i> You have accepted this offer! Our team will contact you soon.
+            </div>
+
+        </div>
+
+        <!-- Error state -->
+        <div id="offer-error" style="display:none; text-align:center; padding:4rem;">
+            <i class="fas fa-exclamation-triangle" style="font-size:2rem; color:#f87171;"></i>
+            <p style="margin-top:1rem; color:var(--text-light);">Offer letter not found or you don't have permission.
+            </p>
+            <a href="applied-jobs.html" class="btn-primary" style="display:inline-block; margin-top:1rem;">Back to
+                Applications</a>
+        </div>
+    </div>
+
+    <script type="module" src="js/offer-letter.js"></script>
+</body>
+
+</html>

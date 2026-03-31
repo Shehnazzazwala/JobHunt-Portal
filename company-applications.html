@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Applications</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        // ── EMAILJS CONFIG ───────────────────────────────────────────────────
+        // 1. Sign up free at https://emailjs.com
+        // 2. Create a service (Gmail, Outlook, etc.) → copy Service ID below
+        // 3. Create an email template with these variables:
+        //    {{to_email}} {{to_name}} {{company_name}} {{job_title}} {{offer_link}}
+        //    Copy the Template ID below
+        // 4. Go to Account → copy your Public Key below
+        window.EMAILJS_SERVICE_ID = "service_tfqpvs8";    // ✅ done
+        window.EMAILJS_TEMPLATE_ID = "template_yo4nu3c";    // ← last one needed
+        window.EMAILJS_PUBLIC_KEY = "7vRjOskJquH3Xaj2E";      // ✅ done
+        // ────────────────────────────────────────────────────────────────────
+        emailjs.init(window.EMAILJS_PUBLIC_KEY);
+    </script>
+</head>
+
+<body>
+    <nav class="navbar"></nav>
+    <script type="module">
+        import { loadCompanyNavbar } from "./js/navbar.js";
+        loadCompanyNavbar();
+    </script>
+
+    <div class="container">
+        <h2 style="margin-bottom:1.5rem;">Received Applications</h2>
+        <div id="applications-list">
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script type="module" src="js/company-applications.js"></script>
+</body>
+
+</html>

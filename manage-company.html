@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Profile - Company</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar"></nav>
+    <script type="module">
+        import { loadCompanyNavbar } from "./js/navbar.js";
+        loadCompanyNavbar();
+    </script>
+    <div class="container" style="max-width: 800px;">
+        <!-- View Mode -->
+        <div id="view-mode" class="card fade-in">
+            <div
+                style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 2rem; border-bottom:1px solid var(--glass-border); padding-bottom:1.5rem;">
+                <div>
+                    <h2 id="view-name" style="font-size: 2rem; margin-bottom: 0.5rem;">Loading...</h2>
+                    <p style="color:var(--text-light); margin-bottom: 0.5rem;"><i class="fas fa-map-marker-alt"></i>
+                        <span id="view-locations">...</span>
+                    </p>
+                    <p style="color:var(--text-light); font-size: 0.9rem;"><i class="fas fa-users"></i> <span
+                            id="view-employees">...</span> Employees</p>
+                </div>
+                <button id="edit-btn" class="btn-primary">Edit Profile</button>
+            </div>
+
+            <div class="profile-section" style="margin-bottom: 2rem;">
+                <h3
+                    style="color: var(--text-light); margin-bottom: 1rem; font-size: 1.1rem; border-left: 3px solid var(--primary); padding-left: 10px;">
+                    About Us</h3>
+                <p id="view-about" style="line-height: 1.6;">...</p>
+            </div>
+
+            <div class="profile-section" style="margin-bottom: 2rem;">
+                <h3
+                    style="color: var(--text-light); margin-bottom: 1rem; font-size: 1.1rem; border-left: 3px solid var(--primary); padding-left: 10px;">
+                    Detailed Description</h3>
+                <p id="view-description" style="white-space: pre-line; line-height: 1.6;">...</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="profile-section">
+                    <h3
+                        style="color: var(--text-light); margin-bottom: 1rem; font-size: 1.1rem; border-left: 3px solid var(--primary); padding-left: 10px;">
+                        Services</h3>
+                    <p id="view-services" style="white-space: pre-line; line-height: 1.6;">...</p>
+                </div>
+                <div class="profile-section">
+                    <h3
+                        style="color: var(--text-light); margin-bottom: 1rem; font-size: 1.1rem; border-left: 3px solid var(--primary); padding-left: 10px;">
+                        Products</h3>
+                    <p id="view-products" style="white-space: pre-line; line-height: 1.6;">...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Mode (Hidden) -->
+        <div id="edit-mode" class="card fade-in" style="display: none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
+                <h2>Edit Company Details</h2>
+                <button id="cancel-btn" class="btn-secondary">Cancel</button>
+            </div>
+
+            <form id="company-profile-form">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" id="c-name" disabled style="background: rgba(15, 23, 42, 0.3);">
+                    </div>
+                    <div class="form-group">
+                        <label>Employees Count</label>
+                        <input type="text" id="c-employees" placeholder="e.g. 50-100">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Locations (Headquarters/Branches)</label>
+                    <input type="text" id="c-locations" placeholder="e.g. New York, London, Tokyo">
+                </div>
+
+                <div class="form-group">
+                    <label>About Company</label>
+                    <textarea id="c-about" rows="4" placeholder="Tell us about your company..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Description (Detailed)</label>
+                    <textarea id="c-description" rows="4"
+                        placeholder="Detailed description of culture, values..."></textarea>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Services</label>
+                        <textarea id="c-services" rows="3" placeholder="List your key services..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Products</label>
+                        <textarea id="c-products" rows="3" placeholder="List your key products..."></textarea>
+                    </div>
+                </div>
+
+                <div style="text-align: right; margin-top: 1rem;">
+                    <button type="submit" class="btn-primary">Save Details</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="module" src="js/manage-company.js"></script>
+</body>
+
+</html>

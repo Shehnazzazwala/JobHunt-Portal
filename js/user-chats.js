@@ -1,0 +1,60 @@
+import { auth, db, collection, query, where, getDocs, onAuthStateChanged } from "./firebase-config.js";
+
+const chatsList = document.getElementById('chats-list');
+
+onAuthStateChanged(auth, async (user) => {
+    if (user) {
+        loadUserChats(user.uid);
+    } else {
+        window.location.href = "auth.html";
+    }
+});
+
+async function loadUserChats(userId) {
+    try {
+        // Query applications where chat has actually started
+        const q = query(
+            collection(db, "applications"),
+            where("userId", "==", userId),
+            where("chatStarted", "==", true)
+        );
+
+        const snap = await getDocs(q);
+        chatsList.innerHTML = "";
+
+        if (snap.empty) {
+            chatsList.innerHTML = `
+                <div class="notif-empty" style="margin-top: 3rem;">
+                    <i class="fas fa-comment-slash"></i>
+                    <p>No active chats yet.<br>Apply for jobs to start corresponding with companies!</p>
+                </div>`;
+            return;
+        }
+
+        snap.forEach(docSnap => {
+            const app = docSnap.data();
+            const appId = docSnap.id;
+
+            const card = document.createElement('div');
+            card.className = "card chat-list-card";
+            card.innerHTML = `
+                <div class="section-header-row" style="margin-bottom: 0;">
+                    <div>
+                        <h3 style="margin-bottom: 4px;">${app.companyName || 'Company'}</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-light); margin: 0;">
+                            <i class="fas fa-briefcase" style="font-size: 0.8rem;"></i> ${app.jobTitle}
+                        </p>
+                    </div>
+                    <a href="applicant-chat.html?appId=${appId}" class="btn-primary" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                        <i class="fas fa-comment"></i> Open Chat
+                    </a>
+                </div>
+            `;
+            chatsList.appendChild(card);
+        });
+
+    } catch (e) {
+        console.error("Load chats error:", e);
+        chatsList.innerHTML = "<p>Error loading chats. Please try again later.</p>";
+    }
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Chats - JobHunt</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar"></nav>
+
+    <div class="container main-content">
+        <div class="section-header-row">
+            <h1><i class="fas fa-comments"></i> My Chats</h1>
+        </div>
+
+        <div id="chats-list" class="grid-1">
+            <p class="loading-text">Loading your conversations...</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { loadUserNavbar } from "./js/navbar.js";
+        loadUserNavbar();
+    </script>
+    <script type="module" src="js/user-chats.js"></script>
+</body>
+
+</html>

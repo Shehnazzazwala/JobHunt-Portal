@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Company Portal - JobHunt</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="logo">JobHunt <span style="font-size:0.8rem; color:#666;">for Employers</span></a>
+    </nav>
+
+    <div class="container" style="max-width: 500px;">
+        <div class="card">
+            <h2 id="form-title" style="text-align:center; margin-bottom:1rem;">Company Registration</h2>
+            <p id="subtitle" style="text-align:center; color:#666; margin-bottom:1.5rem;">Join to post jobs and find talent.</p>
+            
+            <form id="company-auth-form">
+                <!-- Company Name (Hidden during Login) -->
+                <div class="form-group" id="name-group">
+                    <label>Company Name</label>
+                    <input type="text" id="comp-name" placeholder="e.g. TechCorp Solutions">
+                </div>
+
+                <div class="form-group">
+                    <label>Official Email</label>
+                    <input type="email" id="comp-email" required placeholder="hr@company.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="comp-password" required>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submit-btn" style="width:100%">Register Company</button>
+            </form>
+
+            <p style="margin-top:1.5rem; text-align:center;">
+                <span id="toggle-text">Already have an account? </span>
+                <a href="#" id="toggle-auth" style="color:var(--primary); font-weight:bold;">Login here</a>
+            </p>
+            
+            <p id="msg-box" style="margin-top:10px; text-align:center;"></p>
+        </div>
+    </div>
+
+    <script type="module" src="js/company-auth.js"></script>
+</body>
+</html>

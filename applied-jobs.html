@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Applications</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav class="navbar"></nav>
+    <script type="module">
+        import { loadUserNavbar } from "./js/navbar.js";
+        loadUserNavbar();
+    </script>
+
+    <div class="container">
+        <h2 style="margin-bottom: 2rem;">Jobs Applied</h2>
+        <div class="card">
+            <div id="applied-jobs-list">
+                <p style="color:#888;">Loading applications...</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/applied-jobs.js"></script>
+</body>
+
+</html>

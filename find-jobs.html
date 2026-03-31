@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JobHunt - Find Jobs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- Transformers.js for SBERT semantic search -->
+    <script type="module">
+        import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2';
+        window.transformers = { pipeline, env };
+    </script>
+</head>
+
+<body>
+    <nav class="navbar"></nav>
+    <script type="module">
+        import { loadUserNavbar } from "./js/navbar.js";
+        loadUserNavbar();
+    </script>
+    <div id="filter-backdrop" class="filter-backdrop"></div>
+
+    <div class="container sidebar-layout">
+        <!-- Sidebar Filters (Drawer) -->
+        <aside class="filter-drawer" id="filter-drawer">
+            <button class="close-drawer" id="close-drawer">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="card card-sm">
+                <h3 class="section-header">Filters</h3>
+
+                <!-- Date Filter -->
+                <div class="form-group">
+                    <label>Date Posted</label>
+                    <select id="filter-date" class="filter-input">
+                        <option value="any">Any Time</option>
+                        <option value="24h">Past 24 Hours</option>
+                        <option value="7d">Past Week</option>
+                        <option value="30d">Past Month</option>
+                    </select>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="filter-location" placeholder="e.g. New York" class="filter-input">
+                </div>
+
+                <!-- Job Type Filter -->
+                <div class="form-group">
+                    <label>Job Type</label>
+                    <select id="filter-type" class="filter-input">
+                        <option value="any">Any Type</option>
+                        <option value="On-site">On-site</option>
+                        <option value="Remote">Remote</option>
+                        <option value="Hybrid">Hybrid</option>
+                    </select>
+                </div>
+
+                <!-- Semantic Search Toggle -->
+                <div class="form-group smart-match-container">
+                    <label class="smart-match-label">
+                        <input type="checkbox" id="toggle-smart-match" class="smart-match-checkbox">
+                        <span>✨ Smart Match (AI)</span>
+                    </label>
+                    <p style="font-size: 0.75rem; color: var(--text-light); margin-top: 5px;">
+                        Uses AI to find jobs that match your profile's skills and experience.
+                    </p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main>
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <h2 style="margin-bottom: 0;">Latest Opportunities</h2>
+                <button class="filter-toggle-btn" id="filter-toggle-btn">
+                    <i class="fas fa-filter"></i> Filters
+                </button>
+            </div>
+            <div id="job-list">
+                <!-- Jobs injected via JS -->
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

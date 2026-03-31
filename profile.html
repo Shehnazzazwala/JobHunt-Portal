@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+    <nav class="navbar"></nav>
+    <script type="module">
+        import { loadUserNavbar } from "./js/navbar.js";
+        loadUserNavbar();
+    </script>
+
+    <div class="container">
+        <!-- View Mode -->
+        <div id="view-mode" class="card fade-in">
+            <div class="section-header-row section-header">
+                <div>
+                    <h2 id="view-fullname" style="font-size: 2rem; margin-bottom: 0.5rem;">Loading...</h2>
+                    <p id="view-title" class="btn-link" style="font-size: 1.2rem; font-weight: 500;">...</p>
+                    <div class="profile-contact-grid">
+                        <p><i class="fas fa-envelope"></i> <span id="view-email">...</span></p>
+                        <p><i class="fas fa-phone"></i> <span id="view-phone">...</span></p>
+                        <p><i class="fas fa-map-marker-alt"></i> <span id="view-location">...</span></p>
+                        <p><i class="fab fa-linkedin"></i> <a id="view-linkedin" href="#" target="_blank"
+                                class="btn-link" style="font-size: 0.9rem;">LinkedIn</a></p>
+                        <p><i class="fab fa-github"></i> <a id="view-github" href="#" target="_blank" class="btn-link"
+                                style="font-size: 0.9rem;">GitHub</a></p>
+                    </div>
+                </div>
+                <div style="display:flex; gap:0.75rem;">
+                    <button id="ai-resume-btn" class="btn-secondary">
+                        <i class="fas fa-magic"></i> Generate AI Resume
+                    </button>
+                    <button id="edit-btn" class="btn-primary">Edit Profile</button>
+                </div>
+            </div>
+
+            <div class="profile-section" style="margin-bottom: 2rem;">
+                <h3 class="section-header">About Me</h3>
+                <p id="view-aboutme" style="white-space: pre-line; line-height: 1.6;">...</p>
+            </div>
+
+            <div class="profile-section" style="margin-bottom: 2rem;">
+                <h3 class="section-header">
+                    Professional Experience <span id="view-total-exp" class="match-badge"
+                        style="font-size: 0.85rem; margin-left: 10px;">(Total: 0 Yrs)</span></h3>
+                <div id="view-experience-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Experience entries injected here -->
+                    <p style="color: var(--text-light); font-style: italic;">No experience listed.</p>
+                </div>
+            </div>
+
+            <div class="profile-section" style="margin-bottom: 2rem;">
+                <h3 class="section-header">Education</h3>
+                <div id="view-education-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <!-- Education entries injected here -->
+                    <p style="color: var(--text-light); font-style: italic;">No education listed.</p>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <h3 class="section-header">Certifications & Achievements</h3>
+                <p id="view-certs" style="white-space: pre-line; line-height: 1.6;">...</p>
+            </div>
+
+            <div class="profile-section" style="margin-top: 2rem;">
+                <h3 class="section-header">Projects</h3>
+                <div id="view-projects-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <p style="color: var(--text-light); font-style: italic;">No projects listed.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ OFFER LETTERS SECTION ═══ -->
+        <div id="offer-letters-section" class="card fade-in" style="margin-top: 1.5rem; display: none;">
+            <div
+                style="display:flex; align-items:center; gap:0.75rem; border-bottom:1px solid var(--glass-border); padding-bottom:1rem; margin-bottom:1.25rem;">
+                <i class="fas fa-envelope-open-text" style="font-size:1.4rem; color:var(--primary);"></i>
+                <h3 style="margin:0; font-size:1.25rem;">Your Offer Letters</h3>
+            </div>
+            <div id="offer-letters-list">
+                <p style="color:var(--text-light);"><i class="fas fa-circle-notch fa-spin"></i> Loading offer letters...
+                </p>
+            </div>
+        </div>
+
+        <!-- Edit Mode (Hidden by default) -->
+        <div id="edit-mode" class="card fade-in" style="display: none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
+                <h2>Edit Profile</h2>
+                <button id="cancel-btn" class="btn-secondary">Cancel</button>
+            </div>
+
+            <form id="profile-form">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="p-fullname">
+                    </div>
+                    <div class="form-group">
+                        <label>Current Job Title</label>
+                        <input type="text" id="p-title" placeholder="e.g. Frontend Developer">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" id="p-email" disabled style="opacity: 0.7;">
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="p-location" placeholder="e.g. New York, USA">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="p-phone" placeholder="e.g. +91 9876543210">
+                    </div>
+                    <div class="form-group">
+                        <label>LinkedIn URL</label>
+                        <input type="url" id="p-linkedin" placeholder="https://linkedin.com/in/username">
+                    </div>
+                    <div class="form-group">
+                        <label>GitHub URL</label>
+                        <input type="url" id="p-github" placeholder="https://github.com/username">
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="section-header-row">
+                            Professional Experience
+                            <button type="button" id="add-exp-btn" class="btn-sm btn-accept">+ Add Work</button>
+                        </label>
+                        <div id="edit-experience-list"
+                            style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                            <!-- Dynamic job entries injected here -->
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="section-header-row">
+                            Education
+                            <button type="button" id="add-edu-btn" class="btn-sm btn-accept">+ Add Education</button>
+                        </label>
+                        <div id="edit-education-list"
+                            style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                            <!-- Dynamic education entries injected here -->
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Certifications & Achievements</label>
+                        <textarea id="p-certs" rows="3" placeholder="List your awards and certs..."></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Professional Summary (AI will improve this for your resume)</label>
+                        <textarea id="p-aboutme" rows="4"
+                            placeholder="Describe your goals, experience, and what you're looking for."></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label class="section-header-row">
+                            Projects
+                            <button type="button" id="add-proj-btn" class="btn-sm btn-accept">+ Add Project</button>
+                        </label>
+                        <div id="edit-projects-list"
+                            style="margin-top: 10px; display: flex; flex-direction: column; gap: 10px;">
+                            <!-- Dynamic project entries injected here -->
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Categorized Skills (e.g. Programming: Python, Java; Tools: Git, Docker)</label>
+                        <textarea id="p-skills" rows="3" placeholder="Languages, Frameworks, Tools, etc."></textarea>
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem; text-align: right;">
+                    <button type="submit" id="save-btn" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Hidden Resume Preview (Professional A4 Template) -->
+        <div id="resume-preview"
+            style="display: none; width: 210mm; background: white; padding: 30px 45px; box-sizing: border-box; position: absolute; left: -9999px; color: #000; font-family: 'Times New Roman', Times, serif;">
+            <style>
+                #resume-preview h1 {
+                    font-size: 32px;
+                    font-weight: 500;
+                    margin-bottom: 8px;
+                    text-align: center;
+                }
+
+                #resume-preview .contact-info {
+                    display: flex;
+                    justify-content: center;
+                    gap: 15px;
+                    font-size: 13px;
+                    flex-wrap: wrap;
+                    margin-bottom: 15px;
+                }
+
+                #resume-preview .section-title {
+                    font-size: 15px;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                    border-bottom: 1.5px solid black;
+                    margin-top: 12px;
+                    margin-bottom: 8px;
+                    padding-bottom: 2px;
+                }
+
+                #resume-preview p,
+                #resume-preview li {
+                    font-size: 13px;
+                    line-height: 1.4;
+                    text-align: justify;
+                    margin-bottom: 4px;
+                }
+
+                #resume-preview ul {
+                    margin-left: 20px;
+                    list-style-type: disc;
+                }
+
+                #resume-preview .entry-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: baseline;
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+
+                #resume-preview .entry-sub {
+                    display: flex;
+                    justify-content: space-between;
+                    font-style: italic;
+                    font-size: 13px;
+                    margin-bottom: 4px;
+                }
+
+                #resume-preview .skills-category {
+                    font-weight: bold;
+                }
+
+                #resume-preview .cert-grid {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 5px 20px;
+                    margin-top: 5px;
+                }
+
+                #resume-preview .cert-item {
+                    font-size: 11.5px;
+                    border-left: 2px solid #000;
+                    padding-left: 8px;
+                    line-height: 1.3;
+                }
+
+                #resume-preview footer {
+                    margin-top: 30px;
+                    text-align: center;
+                    font-size: 11px;
+                    color: #666;
+                    border-top: 1px solid #eee;
+                    padding-top: 5px;
+                }
+            </style>
+
+            <header style="text-align: center;">
+                <h1 id="res-name">User Name</h1>
+                <div class="contact-info">
+                    <span id="res-email-wrap"><i class="fa fa-envelope"></i> <span id="res-email"></span></span>
+                    <span id="res-phone-wrap"><i class="fa fa-phone"></i> <span id="res-phone"></span></span>
+                    <span id="res-linkedin-wrap"><i class="fab fa-linkedin"></i> <span id="res-linkedin"></span></span>
+                    <span id="res-github-wrap"><i class="fab fa-github"></i> <span id="res-github"></span></span>
+                    <span id="res-location-wrap"><i class="fa fa-location-dot"></i> <span
+                            id="res-location"></span></span>
+                </div>
+            </header>
+
+            <section>
+                <div class="section-title">Professional Summary</div>
+                <p id="res-summary">Your summary will be generated by AI based on your profile...</p>
+            </section>
+
+            <section>
+                <div class="section-title">Education</div>
+                <div id="res-education-list">
+                    <!-- Dynamic Education -->
+                </div>
+            </section>
+
+            <section>
+                <div class="section-title">Work Experience</div>
+                <div id="res-experience">
+                    <!-- Dynamic Experience highlights generated by AI -->
+                </div>
+            </section>
+
+            <section id="res-skills-section">
+                <div class="section-title">Skills Summary</div>
+                <div id="res-skills-content"></div>
+            </section>
+
+            <section id="res-projects-section">
+                <div class="section-title">Projects</div>
+                <div id="res-projects-content"></div>
+            </section>
+
+            <section id="res-certs-section">
+                <div class="section-title">Certifications & Accomplishments</div>
+                <div id="res-certs-grid" class="cert-grid"></div>
+            </section>
+
+            <footer id="res-footer-email"></footer>
+        </div>
+    </div>
+
+    <script type="module" src="js/profile.js"></script>
+</body>
+
+</html>

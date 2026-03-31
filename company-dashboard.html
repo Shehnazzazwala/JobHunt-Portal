@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar"></nav>
+    <script type="module">
+        import { loadCompanyNavbar } from "./js/navbar.js";
+        loadCompanyNavbar();
+    </script>
+    <div class="container" style="max-width: 600px;">
+        <div class="card">
+            <h2>Post a New Job</h2>
+            <form id="job-post-form">
+                <div class="form-group">
+                    <label>Job Title</label>
+                    <input type="text" id="job-title" required placeholder="e.g. Senior Backend Engineer">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="job-location" required placeholder="e.g. San Francisco, CA">
+                    </div>
+                    <div class="form-group">
+                        <label>Job Type</label>
+                        <select id="job-type" required
+                            style="width:100%; padding: 0.8rem; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="On-site">On-site</option>
+                            <option value="Remote">Remote</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Vacancies</label>
+                        <input type="number" id="job-vacancies" value="1" min="1" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Job Description</label>
+                    <textarea id="job-desc" rows="5" required placeholder="Details about the role..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Requirements</label>
+                    <textarea id="job-req" rows="3" required placeholder="Skills needed..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Salary Range (Optional)</label>
+                    <input type="text" id="job-salary" placeholder="e.g. $80k - $100k">
+                </div>
+                <button type="submit" class="btn-primary" style="width:100%">Post Job</button>
+            </form>
+        </div>
+
+        <!-- Posted Jobs Section -->
+        <div class="card" style="margin-top: 2rem;">
+            <h2>Your Posted Jobs</h2>
+            <div id="posted-jobs-list" style="margin-top: 1rem;">
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="js/company-dashboard.js"></script>
+</body>
+
+</html>

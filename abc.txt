@@ -1,0 +1,11 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyDrJE877KArvsLfoN_oXbb4M9Cr-iC292c",
+  authDomain: "jobportal-b5f61.firebaseapp.com",
+  projectId: "jobportal-b5f61",
+  storageBucket: "jobportal-b5f61.firebasestorage.app",
+  messagingSenderId: "530796418972",
+  appId: "1:530796418972:web:56a12d0d5b24841a441a59",
+  measurementId: "G-F7XXVXFD9N"
+};
+
+

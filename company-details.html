@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>Company Details</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar"></nav>
+    <script type="module">
+        import { loadUserNavbar } from "./js/navbar.js";
+        loadUserNavbar();
+    </script>
+
+    <div class="container sidebar-layout">
+        <!-- Sidebar Info -->
+        <aside>
+            <div class="card card-sm sticky-top">
+                <h2 id="co-name" style="margin-bottom:0.5rem; font-size:1.8rem;">Loading...</h2>
+                <p id="co-location" class="meta-row"><i class="fas fa-map-marker-alt"></i> ...</p>
+
+                <div style="margin-bottom:1rem;">
+                    <strong>Employees:</strong>
+                    <p id="co-employees" style="color:var(--text-light);">...</p>
+                </div>
+
+                <div style="margin-bottom:1rem;">
+                    <strong>About:</strong>
+                    <p id="co-about" style="color:var(--text-light); font-size:0.9rem;">...</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main>
+            <div class="card" style="margin-bottom:2rem;">
+                <h3 class="section-header">Company Overview</h3>
+
+                <div style="margin-bottom:1.5rem;">
+                    <h4 class="icon-primary" style="margin-bottom:0.5rem;">Description</h4>
+                    <p id="co-desc" style="white-space: pre-line;">...</p>
+                </div>
+
+                <div class="grid-2">
+                    <div>
+                        <h4 class="icon-primary" style="margin-bottom:0.5rem;">Services</h4>
+                        <p id="co-services" style="white-space: pre-line;">...</p>
+                    </div>
+                    <div>
+                        <h4 class="icon-primary" style="margin-bottom:0.5rem;">Products</h4>
+                        <p id="co-products" style="white-space: pre-line;">...</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom:1.5rem;">Open Positions</h3>
+            <div id="co-jobs-list">
+                <p>Loading jobs...</p>
+            </div>
+        </main>
+    </div>
+
+    <script type="module" src="js/company-details.js"></script>
+</body>
+
+</html>
