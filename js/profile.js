@@ -440,20 +440,9 @@ async function loadOfferLetters(uid) {
     }
 }
 
-// 🛡️ SECURITY: OpenAI key and logic are now handled via gitignored secrets
-let OPENAI_API_KEY = "";
-
-// Initializing secrets
-(async () => {
-    try {
-        const { SECRETS } = await import("./secrets.js").catch(() => ({ SECRETS: null }));
-        if (SECRETS && SECRETS.OPENAI_API_KEY) {
-            OPENAI_API_KEY = SECRETS.OPENAI_API_KEY;
-        }
-    } catch (e) {
-        console.info("Running without OpenAI key. Create js/secrets.js for AI features.");
-    }
-})();
+// 🛡️ SECURITY: OpenAI calls are now proxied through your secure serverless function at /api/generate
+// No API keys are present on the frontend.
+const BACKEND_URL = "/api/generate";
 
 const generateBtn = document.getElementById('ai-resume-btn');
 if (generateBtn) {
@@ -466,7 +455,7 @@ async function generateResume() {
         generateBtn.disabled = true;
         generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
-        // 1. Scrape Data
+        // 1. Collect Data
         const name = document.getElementById('p-fullname').value || "Your Name";
         const email = document.getElementById('p-email').value || "";
         const phone = document.getElementById('p-phone').value || "";
@@ -479,31 +468,25 @@ async function generateResume() {
         const skills = document.getElementById('p-skills').value || "";
         const aboutMe = document.getElementById('p-aboutme').value || "";
 
-        // 2. AI Call (OpenAI)
+        // 2. AI Call via Secure Endpoint
         const systemPrompt = "You are a professional resume writer. Return ONLY a JSON object with the key: 'summary' (a concise, impactful professional summary of exactly 2-3 sentences max, around 40-50 words total). Be precise and minimal — no filler words, no generic phrases. Focus on key achievements and core expertise. Do not include any markdown formatting like ```json.";
-        const userPrompt = `Name: ${name}. Title: ${title}. Skills: ${skills}. Experience: ${education + "\n" + certs}. Summary goals: ${aboutMe}.`;
 
-        const url = "https://api.openai.com/v1/chat/completions";
-
-        const response = await fetch(url, {
+        const response = await fetch(BACKEND_URL, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OPENAI_API_KEY}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: "gpt-5-nano",
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: userPrompt }
-                ]
+                name, title, skills,
+                experience: education + "\n" + certs, // Combining for context
+                goals: aboutMe,
+                systemPrompt
             })
         });
 
         if (!response.ok) {
             const errorBody = await response.json().catch(() => ({}));
-            const errorMessage = errorBody.error?.message || response.statusText || "Unknown Error";
-            throw new Error(`OpenAI API Error (${response.status}): ${errorMessage}`);
+            throw new Error(`Server Error (${response.status}): ${errorBody.error || response.statusText}`);
         }
 
         const aiData = await response.json();

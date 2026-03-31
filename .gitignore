@@ -1,13 +1,10 @@
 # Secrets and Environment
 .env
 .env.local
-api/.env
 js/secrets.js
 
 # Dependencies
 node_modules/
-api/node_modules/
-
 
 # IDE / System
 .vscode/
