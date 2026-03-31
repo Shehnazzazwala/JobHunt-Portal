@@ -1,21 +1,34 @@
 /** 
- * 🛠️ LOCAL DEV WRAPPER
+ * 🛠️ LOCAL DEV WRAPPER (Pure Node.js)
  * Run this with: node api/dev.js
- * This simulates a serverless environment for local testing.
+ * NO npm install required!
  */
-const express = require('express');
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
 const handler = require('./generate.js');
-const app = express();
-const PORT = 5000;
 
-app.use(express.json());
+// 🛡️ Simple .env loader (Self-made to avoid 'dotenv' dependency)
+try {
+    const envPath = path.resolve(__dirname, '../.env');
+    if (fs.existsSync(envPath)) {
+        const envContent = fs.readFileSync(envPath, 'utf8');
+        envContent.split('\n').forEach(line => {
+            const [key, value] = line.split('=');
+            if (key && value) process.env[key.trim()] = value.trim();
+        });
+    }
+} catch (e) {
+    console.warn("⚠️  Could not load .env file locally.");
+}
 
-// Proxy all requests to your serverless handler
-app.all('*', (req, res) => {
+const server = http.createServer((req, res) => {
+    // Route everything to the handler
     handler(req, res);
 });
 
-app.listen(PORT, () => {
-    console.log(`\n🚀 Local Dev Server running at http://localhost:${PORT}`);
-    console.log(`🔗 Frontend will now correctly call your /api/generate function.\n`);
+const PORT = 5000;
+server.listen(PORT, () => {
+    console.log(`\n🚀 Zero-Dependency Dev Server running at http://localhost:${PORT}`);
+    console.log(`🔗 No node_modules or npm install needed. Just pure magic.\n`);
 });

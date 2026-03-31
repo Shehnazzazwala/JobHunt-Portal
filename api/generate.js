@@ -1,53 +1,84 @@
-const axios = require('axios');
+const https = require('https');
 
 module.exports = async (req, res) => {
     // 🛡️ CORS Headers (Allow browser access)
-    res.setHeader('Access-Control-Allow-Credentials', true)
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
-    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization')
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
 
     // Handle Preflight (OPTIONS)
     if (req.method === 'OPTIONS') {
-        res.status(200).end()
-        return
+        res.writeHead(200);
+        res.end();
+        return;
     }
 
-    // 🛡️ Only allow POST for the logic
+    // 🛡️ Only allow POST
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
+        res.writeHead(405, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Method Not Allowed' }));
+        return;
     }
 
-    const { name, title, skills, experience, goals, systemPrompt } = req.body;
-    const apiKey = process.env.OPENAI_API_KEY;
+    // Accumulate request body
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
 
-    if (!apiKey) {
-        return res.status(500).json({ error: 'OpenAI API Key not configured on server (Check Environment Variables).' });
-    }
+    req.on('end', async () => {
+        try {
+            const data = JSON.parse(body);
+            const { name, title, skills, experience, goals, systemPrompt } = data;
+            const apiKey = process.env.OPENAI_API_KEY;
 
-    try {
-        const response = await axios.post("https://api.openai.com/v1/chat/completions", {
-            model: "gpt-5-nano",
-            messages: [
-                { role: "system", content: systemPrompt },
-                { role: "user", content: `Name: ${name}. Title: ${title}. Skills: ${skills}. Experience: ${experience}. Summary goals: ${goals}.` }
-            ]
-        }, {
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
+            if (!apiKey) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'OpenAI API Key not configured on server.' }));
+                return;
             }
-        });
 
-        res.status(200).json(response.data);
-    } catch (error) {
-        // 🔴 DETAILED LOGGING FOR DEBUGGING
-        const errorDetail = error.response?.data || error.message;
-        console.error("❌ OpenAI API Error:", JSON.stringify(errorDetail, null, 2));
+            // OpenAI API Request Data
+            const openaiData = JSON.stringify({
+                model: "gpt-4o-mini",
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: `Name: ${name}. Title: ${title}. Skills: ${skills}. Experience: ${experience}. Summary goals: ${goals}.` }
+                ]
+            });
 
-        res.status(error.response?.status || 500).json({
-            error: "OpenAI API Error",
-            details: errorDetail
-        });
-    }
+            // 🚀 Native HTTPS Request
+            const options = {
+                hostname: 'api.openai.com',
+                path: '/v1/chat/completions',
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(openaiData)
+                }
+            };
+
+            const openaiReq = https.request(options, (openaiRes) => {
+                let responseBody = '';
+                openaiRes.on('data', (d) => { responseBody += d; });
+                openaiRes.on('end', () => {
+                    res.writeHead(openaiRes.statusCode, { 'Content-Type': 'application/json' });
+                    res.end(responseBody);
+                });
+            });
+
+            openaiReq.on('error', (e) => {
+                console.error("OpenAI Request Error:", e);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Failed to connect to OpenAI' }));
+            });
+
+            openaiReq.write(openaiData);
+            openaiReq.end();
+
+        } catch (err) {
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Invalid Request Body' }));
+        }
+    });
 };
