@@ -41,7 +41,13 @@ module.exports = async (req, res) => {
 
         res.status(200).json(response.data);
     } catch (error) {
-        console.error("Serverless Function Error:", error.response?.data || error.message);
-        res.status(error.response?.status || 500).json(error.response?.data || { error: "Failed to connect to OpenAI" });
+        // 🔴 DETAILED LOGGING FOR DEBUGGING
+        const errorDetail = error.response?.data || error.message;
+        console.error("❌ OpenAI API Error:", JSON.stringify(errorDetail, null, 2));
+
+        res.status(error.response?.status || 500).json({
+            error: "OpenAI API Error",
+            details: errorDetail
+        });
     }
 };

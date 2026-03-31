@@ -489,7 +489,8 @@ async function generateResume() {
 
         if (!response.ok) {
             const errorBody = await response.json().catch(() => ({}));
-            throw new Error(`Server Error (${response.status}): ${errorBody.error || response.statusText}`);
+            const detailedMsg = errorBody.details ? JSON.stringify(errorBody.details) : (errorBody.error || response.statusText);
+            throw new Error(`Server Error (${response.status}): ${detailedMsg}`);
         }
 
         const aiData = await response.json();
