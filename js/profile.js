@@ -440,12 +440,20 @@ async function loadOfferLetters(uid) {
     }
 }
 
-// 🛡️ SECURITY: OpenAI calls are now proxied through your secure serverless function.
-// For local testing, we point to your dev server on port 5000.
-const BACKEND_URL = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost"
-    ? "http://localhost:5000/api/generate"
-    : "/api/generate";
+// 🛡️ SECURITY: OpenAI key and logic are now handled via gitignored secrets
+let OPENAI_API_KEY = "";
 
+// Initializing secrets
+(async () => {
+    try {
+        const { SECRETS } = await import("./secrets.js").catch(() => ({ SECRETS: null }));
+        if (SECRETS && SECRETS.OPENAI_API_KEY) {
+            OPENAI_API_KEY = SECRETS.OPENAI_API_KEY;
+        }
+    } catch (e) {
+        console.info("Running without OpenAI key. Create js/secrets.js for AI features.");
+    }
+})();
 
 const generateBtn = document.getElementById('ai-resume-btn');
 if (generateBtn) {
@@ -458,7 +466,7 @@ async function generateResume() {
         generateBtn.disabled = true;
         generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
-        // 1. Collect Data
+        // 1. Scrape Data
         const name = document.getElementById('p-fullname').value || "Your Name";
         const email = document.getElementById('p-email').value || "";
         const phone = document.getElementById('p-phone').value || "";
@@ -471,32 +479,43 @@ async function generateResume() {
         const skills = document.getElementById('p-skills').value || "";
         const aboutMe = document.getElementById('p-aboutme').value || "";
 
-        // 2. AI Call via Secure Endpoint
+        // 2. AI Call (OpenAI)
         const systemPrompt = "You are a professional resume writer. Return ONLY a JSON object with the key: 'summary' (a concise, impactful professional summary of exactly 2-3 sentences max, around 40-50 words total). Be precise and minimal — no filler words, no generic phrases. Focus on key achievements and core expertise. Do not include any markdown formatting like ```json.";
+        const userPrompt = `Name: ${name}. Title: ${title}. Skills: ${skills}. Experience: ${education + "\n" + certs}. Summary goals: ${aboutMe}.`;
 
-        const response = await fetch(BACKEND_URL, {
+        const url = "https://api.openai.com/v1/chat/completions";
+
+        const response = await fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${OPENAI_API_KEY}`
             },
             body: JSON.stringify({
-                name, title, skills,
-                experience: education + "\n" + certs, // Combining for context
-                goals: aboutMe,
-                systemPrompt
+                model: "gpt-4o-mini",
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: userPrompt }
+                ]
             })
         });
 
         if (!response.ok) {
             const errorBody = await response.json().catch(() => ({}));
-            const detailedMsg = errorBody.details ? JSON.stringify(errorBody.details) : (errorBody.error || response.statusText);
-            throw new Error(`Server Error (${response.status}): ${detailedMsg}`);
+            let errorMsg = response.statusText || "Unknown Error";
+
+            if (errorBody.error) {
+                errorMsg = errorBody.error.message || JSON.stringify(errorBody.error);
+            }
+
+            throw new Error(`OpenAI API Error (${response.status}): ${errorMsg}`);
         }
 
         const aiData = await response.json();
         const rawAiResponse = aiData.choices?.[0]?.message?.content;
 
         if (!rawAiResponse) throw new Error("AI returned an empty response.");
+
 
 
         const cleanJsonStr = rawAiResponse.replace(/```json|```/gi, '').trim();
