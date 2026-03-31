@@ -440,9 +440,12 @@ async function loadOfferLetters(uid) {
     }
 }
 
-// 🛡️ SECURITY: OpenAI calls are now proxied through your secure serverless function at /api/generate
-// No API keys are present on the frontend.
-const BACKEND_URL = "/api/generate";
+// 🛡️ SECURITY: OpenAI calls are now proxied through your secure serverless function.
+// For local testing, we point to your dev server on port 5000.
+const BACKEND_URL = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost"
+    ? "http://localhost:5000/api/generate"
+    : "/api/generate";
+
 
 const generateBtn = document.getElementById('ai-resume-btn');
 if (generateBtn) {
