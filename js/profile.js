@@ -453,16 +453,16 @@ async function generateResume() {
         generateBtn.disabled = true;
         generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
-        // 1. Securely fetch API Key from Firebase Vault
-        const configRef = doc(db, "config", "openai");
+        // 1. Securely fetch Gemini API Key from Firebase Vault
+        const configRef = doc(db, "config", "gemini");
         const configSnap = await getDoc(configRef);
 
         if (!configSnap.exists()) {
-            throw new Error("OpenAI Key not found in Firebase. Please add it to Firestore in 'config/openai' document.");
+            throw new Error("Gemini Key not found in Firebase. Please add it to Firestore in 'config/gemini' document.");
         }
 
-        const OPENAI_API_KEY = configSnap.data().apiKey;
-        if (!OPENAI_API_KEY) throw new Error("OpenAI Key is empty in Firebase Vault.");
+        const GEMINI_API_KEY = configSnap.data().apiKey;
+        if (!GEMINI_API_KEY) throw new Error("Gemini Key is empty in Firebase Vault.");
 
         // 2. Collect Data
         const name = document.getElementById('p-fullname').value || "Your Name";
