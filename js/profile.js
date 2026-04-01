@@ -477,16 +477,22 @@ async function generateResume() {
         const skills = document.getElementById('p-skills').value || "";
         const aboutMe = document.getElementById('p-aboutme').value || "";
 
-        // 2. AI Call via Secure Endpoint
+        // 3. AI Call (Direct to OpenAI using Vault Key)
         const systemPrompt = "You are a professional resume writer. Return ONLY a JSON object with the key: 'summary' (a concise, impactful professional summary of exactly 2-3 sentences max, around 40-50 words total). Be precise and minimal — no filler words, no generic phrases. Focus on key achievements and core expertise. Do not include any markdown formatting like ```json.";
+        const userPrompt = `Name: ${name}. Title: ${title}. Skills: ${skills}. Experience: ${education + "\n" + certs}. Summary goals: ${aboutMe}.`;
 
-        const response = await fetch(BACKEND_URL, {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${OPENAI_API_KEY}`
+            },
             body: JSON.stringify({
-                name, title, skills,
-                experience: education + "\n" + certs, // Combining for context
-                goals: aboutMe,
-                systemPrompt
+                model: "gpt-4o-mini",
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: userPrompt }
+                ]
             })
         });
 
@@ -498,8 +504,9 @@ async function generateResume() {
                 errorMsg = typeof errorBody.error === 'string' ? errorBody.error : (errorBody.error.message || JSON.stringify(errorBody.error));
             }
 
-            throw new Error(`Server Error (${response.status}): ${errorMsg}`);
+            throw new Error(`OpenAI Error (${response.status}): ${errorMsg}`);
         }
+
 
         const aiData = await response.json();
         const rawAiResponse = aiData.choices?.[0]?.message?.content;
