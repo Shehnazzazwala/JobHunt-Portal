@@ -453,16 +453,16 @@ async function generateResume() {
         generateBtn.disabled = true;
         generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
-        // 1. Securely fetch Gemini API Key from Firebase Vault
-        const configRef = doc(db, "config", "gemini");
+        // 1. Securely fetch OpenAI API Key from Firebase Vault
+        const configRef = doc(db, "config", "openai");
         const configSnap = await getDoc(configRef);
 
         if (!configSnap.exists()) {
-            throw new Error("Gemini Key not found in Firebase. Please add it to Firestore in 'config/gemini' document.");
+            throw new Error("OpenAI Key not found in Firebase. Please add it to Firestore in 'config/openai' document.");
         }
 
-        const GEMINI_API_KEY = configSnap.data().apiKey;
-        if (!GEMINI_API_KEY) throw new Error("Gemini Key is empty in Firebase Vault.");
+        const OPENAI_API_KEY = configSnap.data().apiKey;
+        if (!OPENAI_API_KEY) throw new Error("OpenAI Key is empty in Firebase Vault.");
 
         // 2. Collect Data
         const name = document.getElementById('p-fullname').value || "Your Name";
@@ -477,50 +477,41 @@ async function generateResume() {
         const skills = document.getElementById('p-skills').value || "";
         const aboutMe = document.getElementById('p-aboutme').value || "";
 
-        // 3. AI Call (Bulletproof Multi-Model Fallback)
-        console.log("Calling Google Gemini via Bulletproof Vault...");
+        // 3. AI Call (Direct to OpenAI using Vault Key)
+        console.log("Calling OpenAI via Vault...");
         const systemPrompt = "You are a professional resume writer. Return ONLY a JSON object with the key: 'summary' (a concise, impactful professional summary of exactly 2-3 sentences max, around 40-50 words total). Be precise and minimal — no filler words, no generic phrases. Focus on key achievements and core expertise. Return ONLY a JSON object. No other text.";
         const userPrompt = `Name: ${name}. Title: ${title}. Skills: ${skills}. Experience: ${education + "\n" + certs}. Summary goals: ${aboutMe}.`;
 
-        // We try these models in order of performance/availability
-        const models = ["gemini-1.5-flash", "gemini-1.5-flash-latest", "gemini-pro"];
-        let response = null;
-        let lastError = null;
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${OPENAI_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: "gpt-4o-mini",
+                messages: [
+                    { role: "system", content: systemPrompt },
+                    { role: "user", content: userPrompt }
+                ]
+            })
+        });
 
-        for (const modelId of models) {
-            try {
-                console.log(`Trying model: ${modelId}...`);
-                const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1/models/${modelId}:generateContent?key=${GEMINI_API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: systemPrompt + "\n\nUser Profile Data:\n" + userPrompt }] }]
-                    })
-                });
+        if (!response.ok) {
+            const errorBody = await response.json().catch(() => ({}));
+            let errorMsg = response.statusText || "Unknown Error";
 
-                if (apiResponse.ok) {
-                    response = apiResponse;
-                    console.log(`✅ Success with ${modelId}!`);
-                    break;
-                } else {
-                    const errBody = await apiResponse.json().catch(() => ({}));
-                    console.warn(`⚠️ ${modelId} failed (${apiResponse.status}):`, errBody);
-                    lastError = errBody.error?.message || apiResponse.statusText;
-                }
-            } catch (e) {
-                console.error(`❌ Connection error with ${modelId}:`, e);
-                lastError = e.message;
+            if (errorBody.error) {
+                errorMsg = typeof errorBody.error === 'string' ? errorBody.error : (errorBody.error.message || JSON.stringify(errorBody.error));
             }
-        }
 
-        if (!response) {
-            throw new Error(`All Gemini models failed. Last error: ${lastError}`);
+            throw new Error(`OpenAI Error (${response.status}): ${errorMsg}`);
         }
 
         const aiData = await response.json();
-        const rawAiResponse = aiData.candidates?.[0]?.content?.parts?.[0]?.text;
+        const rawAiResponse = aiData.choices?.[0]?.message?.content;
 
-        if (!rawAiResponse) throw new Error("Gemini returned an empty response.");
+        if (!rawAiResponse) throw new Error("OpenAI returned an empty response.");
 
 
 

@@ -39,12 +39,13 @@ service cloud.firestore {
     }
 
     // 5. App Configuration (The "Vault")
-    match /config/gemini {
+    match /config/openai {
       // Only logged-in users can read the key (for resume generation)
       allow read: if isSignedIn();
       // SECURITY: No one can ever write to this from the app
       allow write: if false;
     }
+
 
   }
 }
