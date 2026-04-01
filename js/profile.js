@@ -477,42 +477,51 @@ async function generateResume() {
         const skills = document.getElementById('p-skills').value || "";
         const aboutMe = document.getElementById('p-aboutme').value || "";
 
-        // 3. AI Call (Direct to GOOGLE GEMINI using Vault Key)
-        console.log("Calling Google Gemini via Vault...");
-        const systemPrompt = "You are a professional resume writer. Return ONLY a JSON object with the key: 'summary' (a concise, impactful professional summary of exactly 2-3 sentences max, around 40-50 words total). Be precise and minimal — no filler words, no generic phrases. Focus on key achievements and core expertise.";
+        // 3. AI Call (Bulletproof Multi-Model Fallback)
+        console.log("Calling Google Gemini via Bulletproof Vault...");
+        const systemPrompt = "You are a professional resume writer. Return ONLY a JSON object with the key: 'summary' (a concise, impactful professional summary of exactly 2-3 sentences max, around 40-50 words total). Be precise and minimal — no filler words, no generic phrases. Focus on key achievements and core expertise. Return ONLY a JSON object. No other text.";
         const userPrompt = `Name: ${name}. Title: ${title}. Skills: ${skills}. Experience: ${education + "\n" + certs}. Summary goals: ${aboutMe}.`;
 
-        // Switch to gemini-pro (most stable model)
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`, {
+        // We try these models in order of performance/availability
+        const models = ["gemini-1.5-flash", "gemini-1.5-flash-latest", "gemini-pro"];
+        let response = null;
+        let lastError = null;
 
+        for (const modelId of models) {
+            try {
+                console.log(`Trying model: ${modelId}...`);
+                const apiResponse = await fetch(`https://generativelanguage.googleapis.com/v1/models/${modelId}:generateContent?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: systemPrompt + "\n\nUser Profile Data:\n" + userPrompt }] }]
+                    })
+                });
 
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: systemPrompt + " Return ONLY a JSON object. No other text.\n\nUser Profile Data:\n" + userPrompt }]
-                }]
-            })
-        });
-
-
-        if (!response.ok) {
-            const errorBody = await response.json().catch(() => ({}));
-            let errorMsg = response.statusText || "Unknown Error";
-
-            if (errorBody.error) {
-                errorMsg = typeof errorBody.error === 'string' ? errorBody.error : (errorBody.error.message || JSON.stringify(errorBody.error));
+                if (apiResponse.ok) {
+                    response = apiResponse;
+                    console.log(`✅ Success with ${modelId}!`);
+                    break;
+                } else {
+                    const errBody = await apiResponse.json().catch(() => ({}));
+                    console.warn(`⚠️ ${modelId} failed (${apiResponse.status}):`, errBody);
+                    lastError = errBody.error?.message || apiResponse.statusText;
+                }
+            } catch (e) {
+                console.error(`❌ Connection error with ${modelId}:`, e);
+                lastError = e.message;
             }
+        }
 
-            throw new Error(`Gemini Error (${response.status}): ${errorMsg}`);
+        if (!response) {
+            throw new Error(`All Gemini models failed. Last error: ${lastError}`);
         }
 
         const aiData = await response.json();
         const rawAiResponse = aiData.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (!rawAiResponse) throw new Error("Gemini returned an empty response.");
+
 
 
         const cleanJsonStr = rawAiResponse.replace(/```json|```/gi, '').trim();
