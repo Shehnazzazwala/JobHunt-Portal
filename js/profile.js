@@ -491,13 +491,11 @@ async function generateResume() {
             },
             body: JSON.stringify({
                 contents: [{
-                    parts: [{ text: systemPrompt + "\n\nUser Profile Data:\n" + userPrompt }]
-                }],
-                generationConfig: {
-                    response_mime_type: "application/json"
-                }
+                    parts: [{ text: systemPrompt + " Return ONLY a JSON object. No other text.\n\nUser Profile Data:\n" + userPrompt }]
+                }]
             })
         });
+
 
         if (!response.ok) {
             const errorBody = await response.json().catch(() => ({}));
