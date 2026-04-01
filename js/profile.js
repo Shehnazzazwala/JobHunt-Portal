@@ -440,10 +440,8 @@ async function loadOfferLetters(uid) {
     }
 }
 
-// 🛡️ SECURITY: OpenAI calls are now proxied through your secure serverless function at /api/generate
-// No API keys are present on the frontend.
-const BACKEND_URL = "/api/generate";
-
+// 🛡️ SECURITY: OpenAI key is now stored in your "Firebase Vault" (Firestore: config/openai)
+// We fetch it securely at runtime only for logged-in users.
 const generateBtn = document.getElementById('ai-resume-btn');
 if (generateBtn) {
     generateBtn.addEventListener('click', generateResume);
@@ -455,7 +453,18 @@ async function generateResume() {
         generateBtn.disabled = true;
         generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
 
-        // 1. Collect Data
+        // 1. Securely fetch API Key from Firebase Vault
+        const configRef = doc(db, "config", "openai");
+        const configSnap = await getDoc(configRef);
+
+        if (!configSnap.exists()) {
+            throw new Error("OpenAI Key not found in Firebase. Please add it to Firestore in 'config/openai' document.");
+        }
+
+        const OPENAI_API_KEY = configSnap.data().apiKey;
+        if (!OPENAI_API_KEY) throw new Error("OpenAI Key is empty in Firebase Vault.");
+
+        // 2. Collect Data
         const name = document.getElementById('p-fullname').value || "Your Name";
         const email = document.getElementById('p-email').value || "";
         const phone = document.getElementById('p-phone').value || "";
