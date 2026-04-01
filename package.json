@@ -1,0 +1,10 @@
+{
+    "name": "jobhunt-secure-portal",
+    "version": "1.0.0",
+    "description": "Secure Job Portal with Serverless API",
+    "main": "index.html",
+    "scripts": {
+        "start": "node api/dev.js"
+    },
+    "dependencies": {}
+}
