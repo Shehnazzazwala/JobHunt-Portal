@@ -4,6 +4,7 @@
     "description": "Secure Job Portal with Serverless API",
     "main": "index.html",
     "scripts": {
+        "build": "echo 'Building...'",
         "start": "node api/dev.js"
     },
     "dependencies": {}
