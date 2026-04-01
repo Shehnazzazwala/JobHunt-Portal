@@ -1,4 +1,4 @@
-import { auth, db, doc, getDoc, updateDoc, onAuthStateChanged, collection, query, where, getDocs } from "./firebase-config.js";
+import { auth, db, doc, getDoc, updateDoc, onAuthStateChanged, collection, query, where, getDocs, setDoc } from "./firebase-config.js";
 
 const viewMode = document.getElementById('view-mode');
 const editMode = document.getElementById('edit-mode');
