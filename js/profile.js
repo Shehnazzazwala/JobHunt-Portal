@@ -440,7 +440,7 @@ async function loadOfferLetters(uid) {
     }
 }
 
-// 🛡️ SECURITY: OpenAI key is now stored in your "Firebase Vault" (Firestore: config/openai)
+// 🛡️ SECURITY: AI Key is now stored in your "Firebase Vault" (Firestore: config/gemini)
 // We fetch it securely at runtime only for logged-in users.
 const generateBtn = document.getElementById('ai-resume-btn');
 if (generateBtn) {
@@ -477,22 +477,23 @@ async function generateResume() {
         const skills = document.getElementById('p-skills').value || "";
         const aboutMe = document.getElementById('p-aboutme').value || "";
 
-        // 3. AI Call (Direct to OpenAI using Vault Key)
-        const systemPrompt = "You are a professional resume writer. Return ONLY a JSON object with the key: 'summary' (a concise, impactful professional summary of exactly 2-3 sentences max, around 40-50 words total). Be precise and minimal — no filler words, no generic phrases. Focus on key achievements and core expertise. Do not include any markdown formatting like ```json.";
+        // 3. AI Call (Direct to GOOGLE GEMINI using Vault Key)
+        console.log("Calling Google Gemini via Vault...");
+        const systemPrompt = "You are a professional resume writer. Return ONLY a JSON object with the key: 'summary' (a concise, impactful professional summary of exactly 2-3 sentences max, around 40-50 words total). Be precise and minimal — no filler words, no generic phrases. Focus on key achievements and core expertise.";
         const userPrompt = `Name: ${name}. Title: ${title}. Skills: ${skills}. Experience: ${education + "\n" + certs}. Summary goals: ${aboutMe}.`;
 
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OPENAI_API_KEY}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                model: "gpt-4o-mini",
-                messages: [
-                    { role: "system", content: systemPrompt },
-                    { role: "user", content: userPrompt }
-                ]
+                contents: [{
+                    parts: [{ text: systemPrompt + "\n\nUser Profile Data:\n" + userPrompt }]
+                }],
+                generationConfig: {
+                    response_mime_type: "application/json"
+                }
             })
         });
 
@@ -504,15 +505,13 @@ async function generateResume() {
                 errorMsg = typeof errorBody.error === 'string' ? errorBody.error : (errorBody.error.message || JSON.stringify(errorBody.error));
             }
 
-            throw new Error(`OpenAI Error (${response.status}): ${errorMsg}`);
+            throw new Error(`Gemini Error (${response.status}): ${errorMsg}`);
         }
 
-
         const aiData = await response.json();
-        const rawAiResponse = aiData.choices?.[0]?.message?.content;
+        const rawAiResponse = aiData.candidates?.[0]?.content?.parts?.[0]?.text;
 
-        if (!rawAiResponse) throw new Error("AI returned an empty response.");
-
+        if (!rawAiResponse) throw new Error("Gemini returned an empty response.");
 
 
         const cleanJsonStr = rawAiResponse.replace(/```json|```/gi, '').trim();
